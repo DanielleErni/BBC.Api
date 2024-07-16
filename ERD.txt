@@ -1,0 +1,25 @@
+{
+    id,
+    CustomerName,
+    CustomerAddress,
+    ContanctNum
+}
+{
+    id,
+    bookTitle,
+    bookAuthor,
+}
+{
+    id,
+    Genre
+}
+
+summary
+{
+    id,
+    CustomerId,
+    BookId,
+    GenreId
+}
+
+Bookstore name: Big Book Compilations
