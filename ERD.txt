@@ -1,25 +1,20 @@
-{
-    id,
-    CustomerName,
-    CustomerAddress,
-    ContanctNum
+Game{
+    GameId,
+    Title,
+    Genre,
+    Price
 }
-{
-    id,
-    bookTitle,
-    bookAuthor,
-}
-{
-    id,
-    Genre
-}
-
-summary
-{
-    id,
+Customer{
     CustomerId,
-    BookId,
-    GenreId
+    CustomerName
+    CustomerContactNum
 }
 
-Bookstore name: Big Book Compilations
+Order {
+    id,
+    GameId,
+    CustomerId,
+    Quantity,
+}
+Bookstore name: Best Battle Center
+tag: Where every Compilations are Big.

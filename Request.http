@@ -1,3 +1,8 @@
 GET http://localhost:5005/
 
 ###
+
+GET http://localhost:5005/Order/
+
+###
+GET http://localhost:5005/Order/1
