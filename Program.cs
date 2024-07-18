@@ -13,6 +13,8 @@ app.MapGet("/", () => "Hello World!");
 
 app.MapOrderEndpoint();
 
+app.MapCustomerEndpoint();
+
 app.MigrateDb();
 
 app.Run();

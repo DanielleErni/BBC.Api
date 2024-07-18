@@ -15,17 +15,18 @@ public static class OrderMapping
 
             };
     }
-    public static OrderEntity ToUpdateEntity(this UpdateOrderDto order, int id){
-        return new OrderEntity(){
-                Id = id,
-                GameId = order.GameId,
-                //GameDetails = GameData.Id,
-                CustomerId = order.CustomerId,
-                //CustomerDetails = order.CustomerId,
-                //TotalPrice = TotalValue
+    
+    // public static OrderEntity ToUpdateEntity(this UpdateOrderDto order, int id){
+    //     return new OrderEntity(){
+    //             Id = id,
+    //             GameId = order.GameId,
+    //             //GameDetails = GameData.Id,
+    //             CustomerId = order.CustomerId,
+    //             //CustomerDetails = order.CustomerId,
+    //             //TotalPrice = TotalValue
 
-            };
-    }
+    //         };
+    // }
     public static OrderSummaryDto ToOrderSumDto(this OrderEntity order){
         return new(
             order.Id,

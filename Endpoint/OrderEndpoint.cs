@@ -9,30 +9,6 @@ namespace BBC.Api.Endpoint;
 
 public static class BooksEndpoint
 {
-    /* tempo db phase out na sir
-    private static readonly List<OrderDto> MemaOrderDb = 
-    [
-        new(
-            1,
-            2,
-            1,
-            2
-        ),
-        new(
-            2,
-            1,
-            2,
-            3
-        ),
-        new(
-            3,
-            3,
-            2,
-            1
-        )
-    ];
-    */
-
 
     public static RouteGroupBuilder MapOrderEndpoint(this WebApplication app){
 
