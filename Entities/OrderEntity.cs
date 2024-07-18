@@ -8,5 +8,5 @@ public class OrderEntity
     public GameEntity? GameDetails { get; set; }
     public int CustomerId {get; set;}
     public CustomerEntity? CustomerDetails { get; set; }
-    public int Quantity {get; set;}
+    public double TotalPrice {get; set;}
 }

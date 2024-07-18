@@ -1,9 +1,9 @@
 ﻿namespace BBC.Api.Dto;
 
-public record class BookSummaryDto
+public record class OrderSummaryDto
 (
     int Id,
     int GameId,
     int CustomerId,
-    int Quantity
+    double TotalPrice
 );

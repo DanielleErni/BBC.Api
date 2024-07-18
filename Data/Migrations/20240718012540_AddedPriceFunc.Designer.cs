@@ -4,6 +4,7 @@ using BBC.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BBC.Api.Data.Migrations
 {
     [DbContext(typeof(BBCContext))]
-    partial class BBCContextModelSnapshot : ModelSnapshot
+    [Migration("20240718012540_AddedPriceFunc")]
+    partial class AddedPriceFunc
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -39,7 +42,7 @@ namespace BBC.Api.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Customers");
+                    b.ToTable("Customer");
 
                     b.HasData(
                         new
@@ -98,7 +101,7 @@ namespace BBC.Api.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Games");
+                    b.ToTable("Game");
 
                     b.HasData(
                         new
@@ -172,7 +175,7 @@ namespace BBC.Api.Data.Migrations
 
                     b.HasIndex("GameDetailsId");
 
-                    b.ToTable("Orders");
+                    b.ToTable("Order");
                 });
 
             modelBuilder.Entity("BBC.Api.Entities.OrderEntity", b =>
