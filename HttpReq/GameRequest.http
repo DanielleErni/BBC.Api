@@ -1,0 +1,30 @@
+
+
+GET http://localhost:5005/Game/
+
+###
+GET http://localhost:5005/Game/1
+
+###
+POST http://localhost:5005/Game/
+Content-Type: application/json
+
+{
+    "Title": "GTA: 6",
+    "Genre": "Open-World",
+    "Quantity": 7,
+    "Price": 200.69
+}
+###
+PUT http://localhost:5005/Game/6
+Content-Type: application/json
+
+{
+    "Title": "NBA 2k69",
+    "Genre": "Sports",
+    "Quantity": 1,
+    "Price": 69.99
+}
+
+###
+DELETE http://localhost:5005/Game/6

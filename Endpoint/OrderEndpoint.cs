@@ -98,7 +98,7 @@ public static class BooksEndpoint
 
             await dbContext.Orders.Where(order => order.Id == id) //where is basically find
                                   .ExecuteDeleteAsync();
-            return Results.Ok();
+            return Results.Ok("Data has been deleted success");
         });
 
 

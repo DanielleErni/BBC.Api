@@ -1,0 +1,26 @@
+
+
+GET http://localhost:5005/Customer/
+
+###
+GET http://localhost:5005/Customer/2
+
+###
+POST http://localhost:5005/Customer/
+Content-Type: application/json
+
+{
+    "Name": "Jason",
+    "ContanctNumber": 123
+}
+###
+PUT http://localhost:5005/Customer/1
+Content-Type: application/json
+
+{
+    "Name": "Jinx",
+    "ContanctNumber": 6969
+}
+
+###
+DELETE http://localhost:5005/Customer/6

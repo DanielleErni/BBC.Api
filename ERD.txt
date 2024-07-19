@@ -2,7 +2,8 @@ Game{
     GameId,
     Title,
     Genre,
-    Price
+    Price,
+    Quantity
 }
 Customer{
     CustomerId,
@@ -14,7 +15,7 @@ Order {
     id,
     GameId,
     CustomerId,
-    Quantity,
+    TotalPrice,
 }
 Bookstore name: Best Battle Center
 tag: Where every Compilations are Big.
