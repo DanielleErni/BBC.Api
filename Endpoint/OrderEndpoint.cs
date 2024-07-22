@@ -9,7 +9,6 @@ namespace BBC.Api.Endpoint;
 
 public static class BooksEndpoint
 {
-
     public static RouteGroupBuilder MapOrderEndpoint(this WebApplication app){
 
         var OrderEP = app.MapGroup("Order");
@@ -26,7 +25,7 @@ public static class BooksEndpoint
             //var existingOrder = await DbContext.Orders.FindAsync(id); //change this into Order
             
             OrderEntity? order = await DbContext.Orders
-                                                .Include(order => order.GameDetails)
+                                                .Include(order => order.GameDetails) //tinaggal
                                                 .Include(order => order.CustomerDetails)
                                                 .AsNoTracking()
                                                 .FirstOrDefaultAsync(order => order.Id == id);

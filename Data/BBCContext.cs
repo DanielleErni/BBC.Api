@@ -10,9 +10,21 @@ public class BBCContext(DbContextOptions<BBCContext> options) : DbContext(option
     public DbSet<GameEntity> Games => Set<GameEntity>();
     public DbSet<CustomerEntity  > Customers => Set<CustomerEntity>();
 
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+
+
+        // // Configure CustomerEntity relationships
+        // modelBuilder.Entity<OrderEntity>()
+        //     .HasMany(c => c.GameDetails)
+        //     .WithOne(o => o.CustomerDetails)
+        //     .HasForeignKey(o => o.CustomerId)
+        //     .ExecuteDeleteAsync()
+        //     .OnDelete(DeleteBehavior.NoAction);
+
+        // base.OnModelCreating(modelBuilder);
+
+
         modelBuilder.Entity<GameEntity>().HasData(
             new{
                 Id = 1,
