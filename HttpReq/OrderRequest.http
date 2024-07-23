@@ -5,22 +5,22 @@ GET http://localhost:5005/
 GET http://localhost:5005/Order/
 
 ###
-GET http://localhost:5005/Order/2
+GET http://localhost:5005/Order/1
 
 ###
 POST http://localhost:5005/Order/
 Content-Type: application/json
 
 {
-    "GameId": 5,
+    "GameIds": [1, 2],
     "CustomerId": 1
 }
 ###
-PUT http://localhost:5005/Order/5
+PUT http://localhost:5005/Order/1
 Content-Type: application/json
 
 {
-    "GameId": 1,
+    "GameIds": [3, 4],
     "CustomerId": 2
 }
 

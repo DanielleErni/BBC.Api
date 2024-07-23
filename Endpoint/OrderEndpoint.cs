@@ -1,108 +1,142 @@
-﻿
-using BBC.Api.Data;
-using BBC.Api.Dto;
+﻿using BBC.Api.Data;
+using BBC.Api.Dto.OrderDto;
 using BBC.Api.Entities;
 using BBC.Api.Mapping;
 using Microsoft.EntityFrameworkCore;
 
-namespace BBC.Api.Endpoint;
-
-public static class BooksEndpoint
+namespace BBC.Api.Endpoint
 {
-    public static RouteGroupBuilder MapOrderEndpoint(this WebApplication app){
+    public static class OrdersEndpoint
+    {
+        public static RouteGroupBuilder MapOrderEndpoint(this WebApplication app)
+        {
+            var OrderEP = app.MapGroup("Order");
 
-        var OrderEP = app.MapGroup("Order");
+            OrderEP.MapGet("/", async (BBCContext DbContext) =>
+            {
+                return await DbContext.Orders
+                    .Include(o => o.Games)
+                    .Select(order => order.ToOrderSumDto())
+                    .AsNoTracking()
+                    .ToListAsync();
+            });
 
-        OrderEP.MapGet("/", async(BBCContext DbContext)=>{
-            return await DbContext.Orders  //change this into Order
-                            .Select(order => order.ToOrderSumDto())
-                            .AsNoTracking()
-                            .ToListAsync();
-                        
-        });
-        
-        OrderEP.MapGet("/{id}", async(int id, BBCContext DbContext) =>{
-            //var existingOrder = await DbContext.Orders.FindAsync(id); //change this into Order
-            
-            OrderEntity? order = await DbContext.Orders
-                                                .Include(order => order.GameDetails) //tinaggal
-                                                .Include(order => order.CustomerDetails)
-                                                .AsNoTracking()
-                                                .FirstOrDefaultAsync(order => order.Id == id);
-                        
+            OrderEP.MapGet("/{id}", async (int id, BBCContext DbContext) =>
+            {
+                OrderEntity? order = await DbContext.Orders
+                    .Include(order => order.Games)
+                    .Include(order => order.CustomerDetails)
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(order => order.Id == id);
 
-            
-            return order is null ? Results.NotFound() : Results.Ok(order.ToOrderDetailsDto());
-        });
+                if (order == null)
+                {
+                    return Results.NotFound();
+                }
 
-        OrderEP.MapPost("/", async(CreateOrderDto newOrder, BBCContext dbContext)=>{
+                if (order.CustomerDetails == null)
+                {
+                    return Results.Problem("Customer details are missing.");
+                }
 
-            var GameData = await dbContext.Games.FindAsync(newOrder.GameId);
+                if (order.Games == null)
+                {
+                    return Results.Problem("Games are missing.");
+                }
 
-            if(GameData== null){
-                return Results.NotFound();
-            }
+                return Results.Ok(order.ToOrderDetailsDto());
+            });
 
-            double TotalValue = GameData.Price * GameData.Quantity;
+            OrderEP.MapPost("/", async (CreateOrderDto newOrder, BBCContext dbContext) =>
+            {
+                var CustomerData = await dbContext.Customers.FindAsync(newOrder.CustomerId);
+                if (CustomerData == null)
+                {
+                    return Results.NotFound("Customer not found");
+                }
 
-            // OrderEntity order = new(){
-            //     GameId = newOrder.GameId,
-            //     GameDetails = GameData,
-            //     CustomerId = newOrder.CustomerId,
-            //     CustomerDetails = await DbContext.Customers.FindAsync(newOrder.CustomerId),
-            //     TotalPrice = TotalValue
+                var GamesData = new List<GameEntity>();
 
-            // };
+                foreach (var game in newOrder.GameIds)
+                {
+                    var gameData = await dbContext.Games.FirstOrDefaultAsync(g => g.Id == game);
 
-            OrderEntity order = newOrder.ToEntity();
-            order.GameDetails = GameData;
-            order.CustomerDetails = await dbContext.Customers.FindAsync(newOrder.CustomerId);
-            order.TotalPrice = TotalValue;
+                    if (gameData == null) return Results.NotFound();
 
+                    GamesData.Add(gameData);
+                }
+                    
+                if (GamesData.Count != newOrder.GameIds.Count)
+                {
+                    return Results.NotFound("One or more games not found");
+                }
 
-            //OrderDetailsDto 
+                var orderEntity = newOrder.ToEntity(CustomerData, GamesData);
 
-            await dbContext.Orders.AddAsync(order);
-            await dbContext.SaveChangesAsync();
+                await dbContext.Orders.AddAsync(orderEntity);
+                await dbContext.SaveChangesAsync();
 
-            return Results.Created($"origin/orders/{order.Id}", order.ToOrderDetailsDto());
-        });
+                return Results.Created($"origin/orders/{orderEntity.Id}", orderEntity.ToOrderDetailsDto());
+            });
 
-        OrderEP.MapPut("/{id}", async(int id, BBCContext dbContext, UpdateOrderDto editedOrder)=>{
-            var existingOrder = await dbContext.Orders.FindAsync(id);
+            OrderEP.MapPut("/{id}", async (int id, BBCContext dbContext, UpdateOrderDto editedOrder) =>
+            {
+                var existingOrder = await dbContext.Orders
+                    .Include(o => o.Games)
+                    .FirstOrDefaultAsync(o => o.Id == id);
 
+                if (existingOrder == null)
+                {
+                    return Results.NotFound("Order not found");
+                }
 
-            if(existingOrder == null){
-                return Results.NotFound();
-            }
+                var CustomerData = await dbContext.Customers.FindAsync(editedOrder.CustomerId);
+                if (CustomerData == null)
+                {
+                    return Results.NotFound("Customer not found");
+                }
 
-            var GameData = await dbContext.Games.FindAsync(editedOrder.GameId);
+                var GamesData = await dbContext.Games
+                    .Where(g => editedOrder.GameIds.Contains(g.Id))
+                    .ToListAsync();
 
-            double TotalValue = GameData!.Price * GameData!.Quantity;
+                if (GamesData.Count != editedOrder.GameIds.Count)
+                {
+                    return Results.NotFound("One or more games not found");
+                }
 
-            existingOrder.GameId = editedOrder.GameId;
-            existingOrder.GameDetails = GameData;
-            existingOrder.CustomerId = editedOrder.CustomerId;
-            existingOrder.CustomerDetails = await dbContext.Customers.FindAsync(editedOrder.CustomerId);
-            await dbContext.SaveChangesAsync();
-            
+                existingOrder.CustomerId = editedOrder.CustomerId;
+                existingOrder.CustomerDetails = CustomerData;
+                existingOrder.TotalPrice = GamesData.Sum(g => g.Price * g.Quantity);
 
-            var DetailedEditedOrderInfo = existingOrder.ToOrderDetailsDto();
+                existingOrder.Games.Clear();
+                foreach (var game in GamesData)
+                {
+                    existingOrder.Games.Add(game);
+                }
 
-            return Results.Ok(DetailedEditedOrderInfo);
-        });
+                await dbContext.SaveChangesAsync();
 
+                var DetailedEditedOrderInfo = existingOrder.ToOrderDetailsDto();
 
-        OrderEP.MapDelete("/{id}", async(int id, BBCContext dbContext)=>{
+                return Results.Ok(DetailedEditedOrderInfo);
+            });
 
-            await dbContext.Orders.Where(order => order.Id == id) //where is basically find
-                                  .ExecuteDeleteAsync();
-            return Results.Ok("Data has been deleted success");
-        });
+            OrderEP.MapDelete("/{id}", async (int id, BBCContext dbContext) =>
+            {
+                var existingOrder = await dbContext.Orders.FindAsync(id);
+                if (existingOrder == null)
+                {
+                    return Results.NotFound("Order not found");
+                }
 
+                dbContext.Orders.Remove(existingOrder);
+                await dbContext.SaveChangesAsync();
 
+                return Results.Ok("Data has been deleted successfully");
+            });
 
-        return OrderEP;
+            return OrderEP;
+        }
     }
-
 }

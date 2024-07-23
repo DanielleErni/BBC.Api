@@ -1,7 +1,7 @@
-﻿namespace BBC.Api.Dto;
+﻿namespace BBC.Api.Dto.OrderDto;
 
 public record class UpdateOrderDto
 (
-    int GameId,
+    List<int> GameIds,
     int CustomerId
 );

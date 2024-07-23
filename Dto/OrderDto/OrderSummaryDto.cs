@@ -1,9 +1,9 @@
-﻿namespace BBC.Api.Dto;
+﻿namespace BBC.Api.Dto.OrderDto;
 
 public record class OrderSummaryDto
 (
     int Id,
-    int GameId,
+    List<int> GameId,
     int CustomerId,
     double TotalPrice
 );

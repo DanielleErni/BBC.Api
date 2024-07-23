@@ -1,4 +1,6 @@
-﻿namespace BBC.Api.Entities;
+﻿using System.Text.Json.Serialization;
+
+namespace BBC.Api.Entities;
 
 public class GameEntity
 {
@@ -7,4 +9,8 @@ public class GameEntity
     public required string Genre { get; set; }
     public int Quantity { get; set; }
     public double Price { get; set; }
+
+    [JsonIgnore]
+    public ICollection<OrderEntity> Orders { get; set; } = new List<OrderEntity>();
+
 }

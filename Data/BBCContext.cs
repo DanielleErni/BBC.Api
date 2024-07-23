@@ -13,16 +13,11 @@ public class BBCContext(DbContextOptions<BBCContext> options) : DbContext(option
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
 
-
-        // // Configure CustomerEntity relationships
-        // modelBuilder.Entity<OrderEntity>()
-        //     .HasMany(c => c.GameDetails)
-        //     .WithOne(o => o.CustomerDetails)
-        //     .HasForeignKey(o => o.CustomerId)
-        //     .ExecuteDeleteAsync()
-        //     .OnDelete(DeleteBehavior.NoAction);
-
-        // base.OnModelCreating(modelBuilder);
+        modelBuilder.Entity<OrderEntity>()
+                .HasOne(o => o.CustomerDetails)
+                .WithMany(c => c.Orders)
+                .HasForeignKey(o => o.CustomerId)
+                .OnDelete(DeleteBehavior.Cascade); // Add cascade delete behavior  
 
 
         modelBuilder.Entity<GameEntity>().HasData(
@@ -90,6 +85,7 @@ public class BBCContext(DbContextOptions<BBCContext> options) : DbContext(option
                 ContanctNumber = 0905
             }
         );
+        base.OnModelCreating(modelBuilder);
     }
     
 }

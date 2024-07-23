@@ -8,11 +8,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace BBC.Api.Data.Migrations
+namespace BBC.Api.Migrations
 {
     [DbContext(typeof(BBCContext))]
-    [Migration("20240722002223_RemoveUnmappedProperties")]
-    partial class RemoveUnmappedProperties
+    [Migration("20240723024900_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -156,15 +156,60 @@ namespace BBC.Api.Data.Migrations
                     b.Property<int>("CustomerId")
                         .HasColumnType("int");
 
-                    b.Property<int>("GameId")
-                        .HasColumnType("int");
-
                     b.Property<double>("TotalPrice")
                         .HasColumnType("float");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CustomerId");
+
                     b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("GameEntityOrderEntity", b =>
+                {
+                    b.Property<int>("GamesId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OrdersId")
+                        .HasColumnType("int");
+
+                    b.HasKey("GamesId", "OrdersId");
+
+                    b.HasIndex("OrdersId");
+
+                    b.ToTable("GameEntityOrderEntity");
+                });
+
+            modelBuilder.Entity("BBC.Api.Entities.OrderEntity", b =>
+                {
+                    b.HasOne("BBC.Api.Entities.CustomerEntity", "CustomerDetails")
+                        .WithMany("Orders")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CustomerDetails");
+                });
+
+            modelBuilder.Entity("GameEntityOrderEntity", b =>
+                {
+                    b.HasOne("BBC.Api.Entities.GameEntity", null)
+                        .WithMany()
+                        .HasForeignKey("GamesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BBC.Api.Entities.OrderEntity", null)
+                        .WithMany()
+                        .HasForeignKey("OrdersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("BBC.Api.Entities.CustomerEntity", b =>
+                {
+                    b.Navigation("Orders");
                 });
 #pragma warning restore 612, 618
         }
