@@ -12,8 +12,8 @@ POST http://localhost:5005/Order/
 Content-Type: application/json
 
 {
-    "GameIds": [1, 2],
-    "CustomerId": 1
+    "GameIds": [2, 1],
+    "CustomerId": 4
 }
 ###
 PUT http://localhost:5005/Order/1
@@ -25,4 +25,4 @@ Content-Type: application/json
 }
 
 ###
-DELETE http://localhost:5005/Order/2
+DELETE http://localhost:5005/Order/1

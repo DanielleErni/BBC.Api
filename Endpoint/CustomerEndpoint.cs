@@ -18,7 +18,11 @@ public static class CustomerEndpoint
 
         //GET SPECIFIC
         CustomerEP.MapGet("/{id}", async(int id, BBCContext dbContext)=>{
-            var customerDets = await dbContext.Customers.FindAsync(id);
+            var customerDets = await dbContext.Customers
+                                                .Include(game => game.Orders)
+                                                .AsNoTracking()
+                                                .FirstOrDefaultAsync(game => game.Id == id);
+                                                        
             return Results.Ok(customerDets);
         });
 
