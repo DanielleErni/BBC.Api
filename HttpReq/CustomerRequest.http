@@ -3,7 +3,7 @@
 GET http://localhost:5005/Customer/
 
 ###
-GET http://localhost:5005/Customer/1
+GET http://localhost:5005/Customer/7
 
 ###
 POST http://localhost:5005/Customer/

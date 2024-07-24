@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BBC.Api.Migrations
 {
     [DbContext(typeof(BBCContext))]
-    [Migration("20240723024900_init")]
+    [Migration("20240724073913_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -32,7 +32,7 @@ namespace BBC.Api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("ContanctNumber")
+                    b.Property<int>("ContactNumber")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -47,31 +47,31 @@ namespace BBC.Api.Migrations
                         new
                         {
                             Id = 1,
-                            ContanctNumber = 901,
+                            ContactNumber = 901,
                             Name = "Kyla"
                         },
                         new
                         {
                             Id = 2,
-                            ContanctNumber = 902,
+                            ContactNumber = 902,
                             Name = "Sean"
                         },
                         new
                         {
                             Id = 3,
-                            ContanctNumber = 903,
+                            ContactNumber = 903,
                             Name = "Jojo"
                         },
                         new
                         {
                             Id = 4,
-                            ContanctNumber = 904,
+                            ContactNumber = 904,
                             Name = "Niks"
                         },
                         new
                         {
                             Id = 5,
-                            ContanctNumber = 905,
+                            ContactNumber = 905,
                             Name = "Mat"
                         });
                 });

@@ -19,7 +19,7 @@ namespace BBC.Api.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ContanctNumber = table.Column<int>(type: "int", nullable: false)
+                    ContactNumber = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -88,7 +88,7 @@ namespace BBC.Api.Migrations
 
             migrationBuilder.InsertData(
                 table: "Customers",
-                columns: new[] { "Id", "ContanctNumber", "Name" },
+                columns: new[] { "Id", "ContactNumber", "Name" },
                 values: new object[,]
                 {
                     { 1, 901, "Kyla" },

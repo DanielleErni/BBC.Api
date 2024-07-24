@@ -9,8 +9,6 @@ public class GameEntity
     public required string Genre { get; set; }
     public int Quantity { get; set; }
     public double Price { get; set; }
-
-    [JsonIgnore]
     public ICollection<OrderEntity> Orders { get; set; } = new List<OrderEntity>();
 
 }
