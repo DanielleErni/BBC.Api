@@ -1,10 +1,9 @@
-﻿using AutoMapper;
-using BBC.Api.Data;
-using BBC.Api.Dto.CustomerDto;
+﻿using BBC.Api.Data;
 using BBC.Api.Entities;
 using BBC.Api.Mapping;
 using Microsoft.EntityFrameworkCore;
-using static BBC.Api.Dto.GetOrderDto;
+using static BBC.Api.Dto.CustomerDto;
+
 
 namespace BBC.Api.Endpoint;
 
@@ -14,17 +13,14 @@ public static class CustomerEndpoint
     {
         var CustomerEP = app.MapGroup("Customer");
 
-        // GET ALL
-        CustomerEP.MapGet("/", async (BBCContext dbContext, IMapper mapper) =>
+        // GET ALL CUSTOMER ONLY
+        CustomerEP.MapGet("/", async (BBCContext dbContext) =>
         {
-            var customers = await dbContext.Customers
-                .Include(c => c.Orders)
-                .ThenInclude(o => o.Games)
-                .AsNoTracking()
-                .ToListAsync();
+            var AllCustomers = await dbContext.Customers
+                                    .Select(c => c.ToCustomerDetailsDto())
+                                    .ToListAsync();
 
-            var customerDtos = mapper.Map<List<CustomerWithOrdersDto>>(customers);
-            return Results.Ok(customerDtos);
+            return Results.Ok(AllCustomers);
         });
 
         // GET SPECIFIC
@@ -40,38 +36,47 @@ public static class CustomerEndpoint
                 return Results.NotFound();
             }
 
-            //use AutoMapper
-            //var customerDto = mapper.Map<CustomerWithOrdersDto>(customerDets);
-
             //to use Manual mapping
             var customerDto = customerDets.ToCustomerWithOrdersDto(); //pass the details into mapper
             return Results.Ok(customerDto);
         });
 
         // POST
-        CustomerEP.MapPost("/", async (BBCContext dbContext, CreateCustomerDto newCustomer, IMapper mapper) =>
+        CustomerEP.MapPost("/", async (BBCContext dbContext, CreateCustomerDto newCustomer) =>
         {
-            var customerData = mapper.Map<CustomerEntity>(newCustomer);
+            // Map CreateCustomerDto to CustomerEntity
+            var customerEntity = new CustomerEntity
+            {
+                Name = newCustomer.Name!,
+                ContactNumber = newCustomer.ContactNumber
+            };
 
-            await dbContext.Customers.AddAsync(customerData!);
+            // Add the new customer to the database
+            await dbContext.Customers.AddAsync(customerEntity);
             await dbContext.SaveChangesAsync();
-            return Results.Created($"/Customer/{customerData!.Id}", customerData);
+
+            // Return the created customer with a 201 Created response
+            return Results.Created($"/Customer/{customerEntity.Id}", customerEntity.ToCustomerDetailsDto());
         });
 
-        // PUT
-        CustomerEP.MapPut("/{id}", async (int id, BBCContext dbContext, UpdateCustomerDto editedCustomer, IMapper mapper) =>
+        // // PUT
+        CustomerEP.MapPut("/{id}", async (int id, BBCContext dbContext, UpdateCustomerDto editedCustomer) =>
         {
             var customerData = await dbContext.Customers.FindAsync(id);
 
             if (customerData == null)
             {
-                return Results.NotFound();
+                return Results.NotFound("Customer not found");
             }
 
-            mapper.Map(editedCustomer, customerData);
+            customerData.Name = editedCustomer.Name!;
+            customerData.ContactNumber = editedCustomer.ContactNumber;
+        
 
             await dbContext.SaveChangesAsync();
-            return Results.Created($"/Customer/{customerData!.Id}", editedCustomer);
+
+
+            return Results.Created($"/Customer/{customerData!.Id}", customerData.ToCustomerDetailsDto());
         });
 
         // DELETE

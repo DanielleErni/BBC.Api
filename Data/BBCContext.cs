@@ -13,12 +13,6 @@ public class BBCContext(DbContextOptions<BBCContext> options) : DbContext(option
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
 
-        modelBuilder.Entity<OrderEntity>()
-                .HasOne(o => o.CustomerDetails)
-                .WithMany(c => c.Orders)
-                .HasForeignKey(o => o.CustomerId)
-                .OnDelete(DeleteBehavior.Cascade); // Add cascade delete behavior  
-
 
         modelBuilder.Entity<GameEntity>().HasData(
             new{

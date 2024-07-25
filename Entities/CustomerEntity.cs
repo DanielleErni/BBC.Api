@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace BBC.Api.Entities;
+﻿namespace BBC.Api.Entities;
 
 public class CustomerEntity
 {

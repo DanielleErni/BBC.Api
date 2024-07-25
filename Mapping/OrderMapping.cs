@@ -1,12 +1,13 @@
-﻿using BBC.Api.Dto;
-using BBC.Api.Dto.OrderDto;
+﻿
 using BBC.Api.Entities;
+using static BBC.Api.Dto.OrderDto;
 
 namespace BBC.Api.Mapping
 {
     public static class OrderMapping
     {
-        public static OrderEntity ToEntity(this CreateOrderDto dto, CustomerEntity customer, List<GameEntity> games)
+        //Create
+        public static OrderEntity ToCreateOrderEntity(this CreateOrderDto dto, CustomerEntity customer, List<GameEntity> games)
         {
             return new OrderEntity
             {
@@ -19,22 +20,23 @@ namespace BBC.Api.Mapping
 
         public static OrderDetailsDto ToOrderDetailsDto(this OrderEntity order)
         {
-            return new OrderDetailsDto(
-                order.Id,
-                order.Games.ToList(),
-                order.CustomerDetails!,
-                order.TotalPrice
-            );
+            return new OrderDetailsDto
+            {
+                Id = order.Id,
+                Games = order.Games.Select(g => g.ToGameDto()).ToList(),
+                TotalPrice = order.TotalPrice
+            };
         }
 
         public static OrderSummaryDto ToOrderSumDto(this OrderEntity order)
         {
-            return new OrderSummaryDto(
-                order.Id,
-                order.Games.Select(g => g.Id).ToList(),
-                order.CustomerId,
-                order.TotalPrice
-            );
+            return new OrderSummaryDto
+            {
+                Id = order.Id,
+                GameIds = order.Games.Select(g => g.Id).ToList(),
+                CustomerId = order.CustomerId,
+                TotalPrice = order.TotalPrice
+            };
         }
     }
 }

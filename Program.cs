@@ -6,7 +6,6 @@ var builder = WebApplication.CreateBuilder(args);
 var connString = builder.Configuration.GetConnectionString("BBCDB");
 
 builder.Services.AddSqlServer<BBCContext>(connString);
-builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build();
 

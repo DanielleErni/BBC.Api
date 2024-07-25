@@ -3,7 +3,7 @@
 GET http://localhost:5005/Customer/
 
 ###
-GET http://localhost:5005/Customer/7
+GET http://localhost:5005/Customer/1
 
 ###
 POST http://localhost:5005/Customer/
@@ -19,7 +19,7 @@ Content-Type: application/json
 
 {
     "Name": "Jinx",
-    "ContanctNumber": 6969
+    "ContactNumber": 6969
 }
 
 ###

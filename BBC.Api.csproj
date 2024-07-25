@@ -16,7 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Dto\OrderDto\" />
     <Folder Include="HttpReq\" />
     <Folder Include="Mapping\AutoMapper\CustomerMapper\" />
     <Folder Include="Mapping\AutoMapper\GameMapper\" />
