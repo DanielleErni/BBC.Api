@@ -12,16 +12,16 @@ POST http://localhost:5005/Order/
 Content-Type: application/json
 
 {
-    "GameIds": [2, 1],
-    "CustomerId": 4
+    "GameIds": [4, 3],
+    "CustomerId": 2
 }
 ###
 PUT http://localhost:5005/Order/1
 Content-Type: application/json
 
 {
-    "GameIds": [3, 4],
-    "CustomerId": 2
+    "GameIds": [2, 1],
+    "CustomerId": 1
 }
 
 ###

@@ -7,7 +7,7 @@
 namespace BBC.Api.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class Refactored : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,7 +19,7 @@ namespace BBC.Api.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ContanctNumber = table.Column<int>(type: "int", nullable: false)
+                    ContactNumber = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -49,17 +49,17 @@ namespace BBC.Api.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CustomerId = table.Column<int>(type: "int", nullable: false),
+                    CustomerDetailsId = table.Column<int>(type: "int", nullable: true),
                     TotalPrice = table.Column<double>(type: "float", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Orders", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Orders_Customers_CustomerId",
-                        column: x => x.CustomerId,
+                        name: "FK_Orders_Customers_CustomerDetailsId",
+                        column: x => x.CustomerDetailsId,
                         principalTable: "Customers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -88,7 +88,7 @@ namespace BBC.Api.Migrations
 
             migrationBuilder.InsertData(
                 table: "Customers",
-                columns: new[] { "Id", "ContanctNumber", "Name" },
+                columns: new[] { "Id", "ContactNumber", "Name" },
                 values: new object[,]
                 {
                     { 1, 901, "Kyla" },
@@ -116,9 +116,9 @@ namespace BBC.Api.Migrations
                 column: "OrdersId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Orders_CustomerId",
+                name: "IX_Orders_CustomerDetailsId",
                 table: "Orders",
-                column: "CustomerId");
+                column: "CustomerDetailsId");
         }
 
         /// <inheritdoc />

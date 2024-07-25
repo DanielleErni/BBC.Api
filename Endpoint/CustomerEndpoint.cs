@@ -1,61 +1,89 @@
-﻿using AutoMapper;
-using BBC.Api.Data;
-using BBC.Api.Dto.GameDto;
+﻿using BBC.Api.Data;
 using BBC.Api.Entities;
+using BBC.Api.Mapping;
 using Microsoft.EntityFrameworkCore;
+using static BBC.Api.Dto.CustomerDto;
+
 
 namespace BBC.Api.Endpoint;
 
 public static class CustomerEndpoint
 {
-    public static RouteGroupBuilder MapCustomerEndpoint(this WebApplication app){
+    public static RouteGroupBuilder MapCustomerEndpoint(this WebApplication app)
+    {
         var CustomerEP = app.MapGroup("Customer");
 
-        //GET ALL
-        CustomerEP.MapGet("/", (BBCContext dbContext)=>{
-            return dbContext.Customers;
+        // GET ALL CUSTOMER ONLY
+        CustomerEP.MapGet("/", async (BBCContext dbContext) =>
+        {
+            var AllCustomers = await dbContext.Customers
+                                    .Select(c => c.ToCustomerDetailsDto())
+                                    .ToListAsync();
+
+            return Results.Ok(AllCustomers);
         });
 
-        //GET SPECIFIC
-        CustomerEP.MapGet("/{id}", async(int id, BBCContext dbContext)=>{
+        // GET SPECIFIC
+        CustomerEP.MapGet("/{id}", async (int id, BBCContext dbContext) =>
+        {
             var customerDets = await dbContext.Customers
-                                                .Include(game => game.Orders)
-                                                .AsNoTracking()
-                                                .FirstOrDefaultAsync(game => game.Id == id);
-                                                        
-            return Results.Ok(customerDets);
-        });
+                .Include(c => c.Orders) //call orders
+                .ThenInclude(o => o.Games) //call games inside orders
+                .FirstOrDefaultAsync(c => c.Id == id); //find id
 
-        //POST
-        CustomerEP.MapPost("/", async(BBCContext dbContext, CreateGameDto newCustomer,
-        IMapper mapper)=>{
-            var customerData = mapper.Map<CustomerEntity>(newCustomer);
-
-            await dbContext.Customers.AddAsync(customerData!);
-            await dbContext.SaveChangesAsync();
-            return Results.Created($"/Customer/{customerData!.Id}", customerData);
-        });
-
-        //PUT
-        CustomerEP.MapPut("/{id}", async(int id, BBCContext dbContext, UpdateGameDto editedCustomer,
-        IMapper mapper)=>{
-
-            var customerData = await dbContext.Customers.FindAsync(id);
-
-            if(customerData == null){
+            if (customerDets == null)
+            {
                 return Results.NotFound();
             }
 
-            mapper.Map(editedCustomer, customerData);
-
-            await dbContext.SaveChangesAsync();
-            return Results.Created($"/Customer/{customerData!.Id}", editedCustomer);
+            //to use Manual mapping
+            var customerDto = customerDets.ToCustomerWithOrdersDto(); //pass the details into mapper
+            return Results.Ok(customerDto);
         });
 
-        //DELETE
-        CustomerEP.MapDelete("/{id}", async(int id, BBCContext dbContext)=>{
-            await dbContext.Customers.Where(el => el.Id == id).ExecuteDeleteAsync(); //where is basically find
-                                     
+        // POST
+        CustomerEP.MapPost("/", async (BBCContext dbContext, CreateCustomerDto newCustomer) =>
+        {
+            // Map CreateCustomerDto to CustomerEntity
+            var customerEntity = new CustomerEntity
+            {
+                Name = newCustomer.Name!,
+                ContactNumber = newCustomer.ContactNumber
+            };
+
+            // Add the new customer to the database
+            await dbContext.Customers.AddAsync(customerEntity);
+            await dbContext.SaveChangesAsync();
+
+            // Return the created customer with a 201 Created response
+            return Results.Created($"/Customer/{customerEntity.Id}", customerEntity.ToCustomerDetailsDto());
+        });
+
+        // // PUT
+        CustomerEP.MapPut("/{id}", async (int id, BBCContext dbContext, UpdateCustomerDto editedCustomer) =>
+        {
+            var customerData = await dbContext.Customers.FindAsync(id);
+
+            if (customerData == null)
+            {
+                return Results.NotFound("Customer not found");
+            }
+
+            customerData.Name = editedCustomer.Name!;
+            customerData.ContactNumber = editedCustomer.ContactNumber;
+        
+
+            await dbContext.SaveChangesAsync();
+
+
+            return Results.Created($"/Customer/{customerData!.Id}", customerData.ToCustomerDetailsDto());
+        });
+
+        // DELETE
+        CustomerEP.MapDelete("/{id}", async (int id, BBCContext dbContext) =>
+        {
+            await dbContext.Customers.Where(el => el.Id == id).ExecuteDeleteAsync(); // where is basically find
+
             return Results.Ok("Data has been deleted success");
         });
 

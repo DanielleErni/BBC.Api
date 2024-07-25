@@ -13,12 +13,6 @@ public class BBCContext(DbContextOptions<BBCContext> options) : DbContext(option
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
 
-        modelBuilder.Entity<OrderEntity>()
-                .HasOne(o => o.CustomerDetails)
-                .WithMany(c => c.Orders)
-                .HasForeignKey(o => o.CustomerId)
-                .OnDelete(DeleteBehavior.Cascade); // Add cascade delete behavior  
-
 
         modelBuilder.Entity<GameEntity>().HasData(
             new{
@@ -62,27 +56,27 @@ public class BBCContext(DbContextOptions<BBCContext> options) : DbContext(option
             new{
                 Id = 1,
                 Name = "Kyla",
-                ContanctNumber = 0901
+                ContactNumber = 0901
             },
             new{
                 Id = 2,
                 Name = "Sean",
-                ContanctNumber = 0902
+                ContactNumber = 0902
             },
             new{
                 Id = 3,
                 Name = "Jojo",
-                ContanctNumber = 0903
+                ContactNumber = 0903
             },
             new{
                 Id = 4,
                 Name = "Niks",
-                ContanctNumber = 0904
+                ContactNumber = 0904
             },
             new{
                 Id = 5,
                 Name = "Mat",
-                ContanctNumber = 0905
+                ContactNumber = 0905
             }
         );
         base.OnModelCreating(modelBuilder);
